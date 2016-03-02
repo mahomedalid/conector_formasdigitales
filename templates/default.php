@@ -11,13 +11,13 @@
         padding:30px;
         border:1px solid #eee;
         box-shadow:0 0 10px rgba(0, 0, 0, .15);
-        font-size:15px;
+        font-size:14px;
         line-height:24px;
         font-family:'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
         color:#555;
     }
-    
-    .invoice-box table{
+	
+	.invoice-box table{
         width:100%;
         line-height:inherit;
         text-align:left;
@@ -68,6 +68,26 @@
         border-top:2px solid #eee;
         font-weight:bold;
     }
+	
+	.informacionTimbre table td {
+		 word-wrap: break-word;
+		 font-size: 11px;
+		 border: solid 1px #eee;
+		 padding: 3px; 
+		 margin: 0px;
+	}
+	
+	.informacionTimbre table {
+		border-spacing: 0px;
+	}
+	
+	.informacionTimbre table tr td:nth-child(2){
+        text-align:left;
+    }
+	
+	.informacionTimbre table tr td.heading	{
+        background:#eee;
+    }
     
     @media only screen and (max-width: 600px) {
         .invoice-box table tr.top table td{
@@ -81,6 +101,8 @@
             display:block;
             text-align:center;
         }
+		
+		
     }
     </style>
 </head>
@@ -96,10 +118,14 @@
                                 <img src="logos/<?php echo $factura->idCliente ?>.png" style="width:100%; max-width:170px; max-height: 170px;">
                             </td>
                             
-                            <td>
-                                <?php echo strtoupper($factura->xml_data->tipoDeComprobante) ?> <?php echo $invoice_id ?><br>
-                                Fecha: <?php echo $factura->xml_data->fecha ?>
+                            <td style="max-width: 300px; width: 300px;">
+                                <?php echo strtoupper($factura->xml_data->tipoDeComprobante) ?> <strong><?php echo $invoice_id ?></strong><br />
+                                Fecha: <?php echo $factura->xml_data->fecha ?><br />
+								<small><b>EXPEDIDO EN:</b>
+								<?php echo $factura->xml_data->LugarExpedicion ?></small>
                             </td>
+							
+							
                         </tr>
                     </table>
                 </td>
@@ -111,6 +137,7 @@
                         <tr>
                             <td>
                                <strong><?php echo $factura->xml_data->Emisor->nombre ?></strong><br />
+							   <strong><small><?php echo $factura->xml_data->Emisor->Regimen ?></small></strong><br />
 								<?php echo $factura->xml_data->Emisor->Domicilio->calle ?>&nbsp;NO.&nbsp;
 								<?php echo $factura->xml_data->Emisor->Domicilio->noExterior ?>&nbsp;
 								INT.&nbsp;<?php echo $factura->xml_data->Emisor->Domicilio->noInterior ?><br />
@@ -119,9 +146,7 @@
 								<?php echo $factura->xml_data->Emisor->Domicilio->municipio ?>,&nbsp;
 								<?php echo $factura->xml_data->Emisor->Domicilio->estado ?>.&nbsp;<?php echo $factura->xml_data->Emisor->Domicilio->pais ?><br />
 								RFC:&nbsp;<?php echo $factura->xml_data->Emisor->rfc ?><br />
-								<br />
-								<b>EXPEDIDO EN:</b><br />
-								<?php echo $factura->xml_data->LugarExpedicion ?><br />
+								
                             </td>
                             
                             <td>
@@ -142,7 +167,7 @@
                 </td>
             </tr>
             
-            <tr class="heading">
+            <!-- tr class="heading">
                 <td>
                     Payment Method
                 </td>
@@ -160,7 +185,7 @@
                 <td>
                     1000
                 </td>
-            </tr>
+            </tr -->
             
             <tr class="heading">
                 <td>
@@ -211,8 +236,9 @@
 			?>
 			
 			<tr class="total">
-                <td colspan=5></td>
+                <td colspan=5>
 					<small>M&eacute;todo de pago: <?php echo $factura->xml_data->metodoDePago ?></small>
+				</td>
                 <td>
                    Total: $ <?php echo number_format($factura->xml_data->total, 2) ?>
                 </td>
@@ -223,24 +249,23 @@
 				<td colspan=2><small><?php echo $factura->xml_data->formaDePago ?></small></td>
         </table>
 		
-		<div style='background: #000; color: #fff; font-weight: bold;'>Informaci&oacute;n del timbre fiscal</div>
-		<div style="width: 300px; float: left;">
-		</div>
-		<div style="float: left;">
-			<table>
+		<div style='background: #888; color: #fff; font-weight: bold;'>Informaci&oacute;n del timbre fiscal</div>
+		<div style="width: 800px;" class="informacionTimbre">
+			<table style="max-width: 800px; width: 800px; table-layout: fixed;">
 				<tr>
-					<td>Folio Fiscal</td>
-					<td>Certificado Digital SAT</td>
-					<td>Fecha de Certificaci&oacute;n</td>
+					<td style="width: 200px;" class="heading">Certificado Digital SAT</td>
+					<td class="heading">Folio Fiscal</td>
+					<td class="heading">Fecha de Certificaci&oacute;n</td>
 				</tr>
 				<tr>
-					<td><?php echo (string)$timbres[0]['UUID'] ?></td>
+					
 					<td><?php echo $factura->xml_data->noCertificado ?></td>
+					<td><?php echo (string)$timbres[0]['UUID'] ?></td>
 					<td></td>
 				</tr>
 				
 				<tr>
-					<td colspan=3>Cadena original del timbre</td>
+					<td colspan=3 class="heading">Cadena original del timbre</td>
 				</tr>
 				
 				<tr>
@@ -248,19 +273,23 @@
 				</tr>
 				
 				<tr>
-					<td colspan=3>Sello digital del emisor</td>
+					<td rowspan=4 width="200" style="width: 200px; max-width: 200px;">
+						<?php $qr_string = "?re={$factura->xml_data->Emisor->rfc}&rr={$factura->xml_data->Receptor->rfc}&tt={$factura->xml_data->total}&id={$timbres[0]['UUID']}"; ?>
+						<img src="//chart.googleapis.com/chart?chs=200x200&cht=qr&chl=<?php echo urlencode($qr_string) ?>&choe=UTF-8" />
+					</td>
+					<td colspan=2  class="heading">Sello digital del emisor</td>
 				</tr>
 				
 				<tr>
-					<td colspan=3><?php echo (string)$timbres[0]['selloCFD'] ?></td>
+					<td colspan=2><?php echo (string)$timbres[0]['selloCFD'] ?></td>
 				</tr>
 				
 				<tr>
-					<td colspan=3>Sello digital del SAT</td>
+					<td colspan=2 class="heading">Sello digital del SAT</td>
 				</tr>
 				
 				<tr>
-					<td colspan=3><?php echo (string)$timbres[0]['selloSAT'] ?></td>
+					<td colspan=2><?php echo (string)$timbres[0]['selloSAT'] ?></td>
 				</tr>
 				
 			</table>
@@ -270,9 +299,6 @@
 		<div style='margin: 0 auto;text-align: center;'>Este documento es una representación impresa de un CFDI</a></div>
 		<div style='margin: 0 auto;text-align: center;'>Generado con <a href="http://www.bepos.com.mx">www.bepos.com.mx</a></div>
     </div>
-<br />	
-                <span class="Total_Certificado_TipoDatos">Régimen Fiscal:&nbsp;<?php echo $factura->xml_data->Emisor->Regimen ?></span>				
-			
 			
 </body>
 </html>
