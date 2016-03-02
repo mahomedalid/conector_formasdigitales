@@ -14,7 +14,7 @@
 	$invoice_id = $_REQUEST['invoice_id'];
 	$invoice = new Invoice($invoice_id);
 	
-	$renderer = new Invoice_Renderer($invoice);
+	$renderer = new InvoiceRenderer($invoice);
 	
 	$renderer->render ();
 	die ();

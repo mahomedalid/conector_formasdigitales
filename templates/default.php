@@ -98,7 +98,7 @@
                             
                             <td>
                                 Folio Fiscal: <br /><small><strong><?php echo (string)$timbres[0]['UUID'] ?></strong></small><br />
-                                <?php echo $factura->xml_data->tipoDeComprobante ?> CONTROL_INTERNO<br>
+                                <?php echo strtoupper($factura->xml_data->tipoDeComprobante) ?> <?php echo $invoice_id ?><br>
                                 Fecha: <?php echo $factura->xml_data->fecha ?>
                             </td>
                         </tr>
@@ -200,13 +200,16 @@
             </tr>
 			
 			<?php 
-				foreach($factura->xml_data->Traslados as $traslado) {
-					?>
-				<tr class="total">
-					<td colspan=5></td>
-					<td><?php echo $traslado->impuesto ?> <?php echo $traslado->tasa ?>% : $ <?php echo $traslado->importe ?></td>
-				</tr>
-			<?php } ?>
+				if(isset($factura->xml_data->Traslados)) {
+					foreach($factura->xml_data->Traslados as $traslado) {
+						?>
+					<tr class="total">
+						<td colspan=5></td>
+						<td><?php echo $traslado->impuesto ?> <?php echo $traslado->tasa ?>% : $ <?php echo number_format($traslado->importe,2) ?></td>
+					</tr>
+			<?php 	}		 
+				}
+			?>
 			
 			<tr class="total">
                 <td colspan=5></td>
@@ -215,14 +218,16 @@
                    Total: $ <?php echo number_format($factura->xml_data->total, 2) ?>
                 </td>
             </tr>
+			
+			<tr>
+				<td colspan=5></td>
+				<td><?php echo $factura->xml_data->formaDePago ?></td>
         </table>
 		
 		<div style='margin: 0 auto;text-align: center;'>Generado con <a href="http://www.bepos.com.mx">www.bepos.com.mx</a></div>
     </div>
 	
-	
-	 Forma de Pago: <?php echo $factura->xml_data->formaDePago ?><br />
-                <span class="Total_FormaPagoTitulo">Método de Pago:&nbsp;</span>
+	           <span class="Total_FormaPagoTitulo">Método de Pago:&nbsp;</span>
 				<span class="Total_FormaPago"><?php echo $factura->xml_data->metodoDePago ?></span><br />   
 				<span class="Total_FormaPagoTitulo">Número de cuenta:&nbsp;</span>				
 				<span class="Total_FormaPago">-</span><br />            

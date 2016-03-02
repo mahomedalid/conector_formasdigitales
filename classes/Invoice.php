@@ -9,16 +9,17 @@
 	{
 		protected $_id = "";
 		
-		protected $_data = array('factura' => NULL, 'timbres' => '', 'cfdi' => '');
+		protected $_data = array('factura' => NULL, 'timbres' => '', 'cfdi' => '', 'invoice_id' => 0);
 		
 		public function __construct ($id)
 		{
 			$this->_id = $id;
+			$this->_data['invoice_id'] = $id;
 		}
 		
 		public function loadData ()
 		{
-			$data = (file_get_contents(INVOICE_DATA_FOLDER . $this->_id . '.data'));
+			$data = (file_get_contents(INVOICE_DATA_FOLDER . DIRECTORY_SEPARATOR . $this->_id . '.data'));
 			$data = json_decode($data);
 			
 			$cfdi = new SimpleXMLElement($data->results->cfdi);

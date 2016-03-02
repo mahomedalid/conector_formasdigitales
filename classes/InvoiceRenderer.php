@@ -1,6 +1,6 @@
 <?php
 
-	class FacturaRenderer
+	class InvoiceRenderer
 	{
 		protected $_invoice = NULL;
 		
