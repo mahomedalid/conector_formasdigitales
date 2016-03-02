@@ -97,7 +97,6 @@
                             </td>
                             
                             <td>
-                                Folio Fiscal: <br /><small><strong><?php echo (string)$timbres[0]['UUID'] ?></strong></small><br />
                                 <?php echo strtoupper($factura->xml_data->tipoDeComprobante) ?> <?php echo $invoice_id ?><br>
                                 Fecha: <?php echo $factura->xml_data->fecha ?>
                             </td>
@@ -213,57 +212,66 @@
 			
 			<tr class="total">
                 <td colspan=5></td>
-                
+					<small>M&eacute;todo de pago: <?php echo $factura->xml_data->metodoDePago ?></small>
                 <td>
                    Total: $ <?php echo number_format($factura->xml_data->total, 2) ?>
                 </td>
             </tr>
 			
 			<tr>
-				<td colspan=5></td>
-				<td><?php echo $factura->xml_data->formaDePago ?></td>
+				<td colspan=4></td>
+				<td colspan=2><small><?php echo $factura->xml_data->formaDePago ?></small></td>
         </table>
 		
-		<div style='margin: 0 auto;text-align: center;'>Generado con <a href="http://www.bepos.com.mx">www.bepos.com.mx</a></div>
-    </div>
-	
-	           <span class="Total_FormaPagoTitulo">Método de Pago:&nbsp;</span>
-				<span class="Total_FormaPago"><?php echo $factura->xml_data->metodoDePago ?></span><br />   
-				<span class="Total_FormaPagoTitulo">Número de cuenta:&nbsp;</span>				
-				<span class="Total_FormaPago">-</span><br />            
-				<span class="Total_Certificado_TipoDatos">No. de Serie del Certificado del SAT:&nbsp;</span>
-				<span class="Total_Certificado_Datos"><?php echo $factura->xml_data->noCertificado ?><br />
-                <!-- span class="Total_Certificado_TipoDatos">Fecha y Hora de Certificación:&nbsp;</span><span><?php echo $factura->xml_data->noCertificado ?></span -->
-                <br>
-                <span class="Total_Certificado_TipoDatos">Régimen Fiscal:&nbsp;<?php echo $factura->xml_data->Emisor->Regimen ?></span>				
-                <p class="Total_ImporteLetra">Código de barras del timbre:<br />
-                    <br />
-                <img src="codigobarrastimbre.jpg" name="Logotipo" id="Logotipo3" /></p></td>
+		<div style='background: #000; color: #fff; font-weight: bold;'>Informaci&oacute;n del timbre fiscal</div>
+		<div style="width: 300px; float: left;">
+		</div>
+		<div style="float: left;">
+			<table>
+				<tr>
+					<td>Folio Fiscal</td>
+					<td>Certificado Digital SAT</td>
+					<td>Fecha de Certificaci&oacute;n</td>
+				</tr>
+				<tr>
+					<td><?php echo (string)$timbres[0]['UUID'] ?></td>
+					<td><?php echo $factura->xml_data->noCertificado ?></td>
+					<td></td>
+				</tr>
 				
-				<table width="100%" border="0" cellpadding="3" cellspacing="0" id="Sello">
 				<tr>
-					<td class="SelloCadenaTitulo" width="100%">Sello del SAT:&nbsp;</td>
+					<td colspan=3>Cadena original del timbre</td>
 				</tr>
+				
 				<tr>
-					<td class="SelloCadena"><?php echo (string)$timbres[0]['selloSAT'] ?></td>
+					<td colspan=3><?php echo (string)$factura->cadenaOriginal ?></td>
 				</tr>
+				
 				<tr>
-					<td class="SelloCadenaTitulo" width="100%">Sello Digital del CFDI:</td>
+					<td colspan=3>Sello digital del emisor</td>
 				</tr>
+				
 				<tr>
-					<td class="SelloCadena"><?php echo (string)$timbres[0]['selloCFD'] ?></td>
+					<td colspan=3><?php echo (string)$timbres[0]['selloCFD'] ?></td>
 				</tr>
+				
 				<tr>
-					<td class="SelloCadenaTitulo">Cadena Original del complemento de certificación digital del SAT:</td>
+					<td colspan=3>Sello digital del SAT</td>
 				</tr>
+				
 				<tr>
-					<td class="SelloCadena"><?php echo (string)$factura->cadenaOriginal ?></td>
-				</tr>
-				<tr>
-					<td class="SelloLeyenda">Este documento es una representación impresa de un CFDI</td>
+					<td colspan=3><?php echo (string)$timbres[0]['selloSAT'] ?></td>
 				</tr>
 				
 			</table>
+		</div>
+		<div style="clear: both;">&nbsp;</div>
+		
+		<div style='margin: 0 auto;text-align: center;'>Este documento es una representación impresa de un CFDI</a></div>
+		<div style='margin: 0 auto;text-align: center;'>Generado con <a href="http://www.bepos.com.mx">www.bepos.com.mx</a></div>
+    </div>
+<br />	
+                <span class="Total_Certificado_TipoDatos">Régimen Fiscal:&nbsp;<?php echo $factura->xml_data->Emisor->Regimen ?></span>				
 			
 			
 </body>
