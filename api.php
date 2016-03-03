@@ -150,6 +150,10 @@
 	$xml_data['subTotal'] = $subtotal;
 	$xml_data['total'] 	  = $subtotal + $totalImpuestos;
 	
+	/*if(file_exists("Sellos/".$xml_data["noCertificado"].".pem")) {
+		
+	}*/
+	
 	if(count($errors) > 0) {
 		$results ["errors"] = $errors;
 		$results ["success"] = false;
@@ -201,13 +205,17 @@
 		#var_dump ($results);die ();	
 					$rawData = array('xml_data' => $xml_data, 'results' => $results, 'idCliente' => $idCliente, 'cadenaOriginal' => $cadena_original);
 
-					$invoice_id = strtoupper($idCliente . '_' . substr($deviceId,0,3) . substr($deviceId, -3) . '_' . date('YmdHis'));
 					
-					file_put_contents("facturas/".$invoice_id.'.data', json_encode($rawData));
+
+					if(isset($results->cfdi)) {
+						$invoice_id = strtoupper($idCliente . '_' . substr($deviceId,0,3) . substr($deviceId, -3) . '_' . date('YmdHis'));
+						file_put_contents("facturas/".$invoice_id.'.data', json_encode($rawData));
+						$results->invoice_id = $invoice_id;
+						$results->success = true;
+					} else {
+						$results->success = false;
+					}
 					
-					$results->invoice_id = $invoice_id;
-							
-					$results->success = true;
 					$results->receptor_rfc = $receptorRfc;
 
 					$results->xml_url = 'http://facturacion.bepos.com.mx/factura/xml.php?invoice_id='.$invoice_id;
