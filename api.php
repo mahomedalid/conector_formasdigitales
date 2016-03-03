@@ -212,14 +212,15 @@
 						file_put_contents("facturas/".$invoice_id.'.data', json_encode($rawData));
 						$results->invoice_id = $invoice_id;
 						$results->success = true;
+						
+						$results->xml_url = 'http://facturacion.bepos.com.mx/factura/xml.php?invoice_id='.$invoice_id;
+						$results->pdf_url = 'http://facturacion.bepos.com.mx/factura/factura.php?invoice_id='.$invoice_id;
+						
 					} else {
 						$results->success = false;
 					}
 					
 					$results->receptor_rfc = $receptorRfc;
-
-					$results->xml_url = 'http://facturacion.bepos.com.mx/factura/xml.php?invoice_id='.$invoice_id;
-					$results->pdf_url = 'http://facturacion.bepos.com.mx/factura/factura.php?invoice_id='.$invoice_id;
 				} else {
 					$results = array ('errors' => 'Error al conectarse a Forgocsa: ' . $responseAutentica->return->mensaje);
 					$results['success'] = false;
