@@ -205,11 +205,10 @@
 		#var_dump ($results);die ();	
 					$rawData = array('xml_data' => $xml_data, 'results' => $results, 'idCliente' => $idCliente, 'cadenaOriginal' => $cadena_original);
 
+					$invoice_id = strtoupper($idCliente . '_' . substr($deviceId,0,3) . substr($deviceId, -3) . '_' . date('YmdHis'));
+					file_put_contents("facturas/".$invoice_id.'.data', json_encode($rawData));
 					
-
 					if(isset($results->cfdi)) {
-						$invoice_id = strtoupper($idCliente . '_' . substr($deviceId,0,3) . substr($deviceId, -3) . '_' . date('YmdHis'));
-						file_put_contents("facturas/".$invoice_id.'.data', json_encode($rawData));
 						$results->invoice_id = $invoice_id;
 						$results->success = true;
 						
