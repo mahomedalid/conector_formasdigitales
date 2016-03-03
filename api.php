@@ -235,4 +235,3 @@ class Timbrar{
 	public $cfd;
 	public $token;
 }
-
