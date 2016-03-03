@@ -218,15 +218,16 @@
 						
 					} else {
 						$results->success = false;
+						$results->errors = array ($results->mensaje);
 					}
 					
 					$results->receptor_rfc = $receptorRfc;
 				} else {
-					$results = array ('errors' => 'Error al conectarse a Forgocsa: ' . $responseAutentica->return->mensaje);
+					$results = array ('errors' => array('Error al conectarse a Forgocsa: ' . $responseAutentica->return->mensaje));
 					$results['success'] = false;
 				}
 			} catch (SoapFault $e) {
-				$results = array ('errors' => 'Soap Error: ' . $e);
+				$results = array ('errors' => array('Soap Error: ' . $e));
 				$results ["success"] = false;
 			}
 		}
