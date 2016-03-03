@@ -1,49 +1,28 @@
 <?php
 
-	date_default_timezone_set('America/Los_Angeles');
+	include_once('config.php');
+	
 	header('Access-Control-Allow-Origin: *');
-	//Requirements:
-	
-	// - Put api available to Bepos
-	// - Activate modules by device (admin side)
-	// - Upload/Update/Create client data (admin side)
-	// - Login into admin side
-	
-	error_reporting(E_ALL);ini_set('display_errors', TRUE);
-	
-	#var_dump (function_exists('openssl_get_privatekey'));die ();
-	include_once('library/NumberToLetterConverter.php');
-	include_once('sat/satxmlsv32.php');
 	
 	$errors = array ();
 	
-	/*<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv3.xsd" version="3.0" 
-	fecha="2012-03-29T03:50:09"
-	formaDePago="En una sola exhibición" 
-	noCertificado="20001000000100001696" 
-	certificado
-	subTotal="1187400.170000" total="1428337.850000" tipoDeComprobante="ingreso">*/
+	$db = new DB();
 	
-#	<cfdi:Emisor nombre="GASISLO 2000 SA DE CV SUC. LOPEZ" rfc="APR0412108C5">
-#    <cfdi:DomicilioFiscal calle="BLVD. LOPEZ MATEOS" noExterior="101" colonia="CENTRO" localidad="ZACATECAS" municipio="ZACATECAS" estado="ZACATECAS" pais="MEXICO" codigoPostal="98000" />
-#    <cfdi:ExpedidoEn calle="Cjon. del Plomo" noExterior="S/N" colonia="CENTRO" localidad="ZACATECAS" municipio="ZACATECAS" estado="ZACATECAS" pais="MEXICO" codigoPostal="98000" />
-#  </cfdi:Emisor>
-  
-	$devices = array ("browserTest" => 10, '364453d08a2792fb' => 10, '6ed20d2659d9f08e' => 10);
-
+	#array ("browserTest" => 10, '364453d08a2792fb' => 10, '6ed20d2659d9f08e' => 10);
 	
-	if(isset($_REQUEST['idCliente'])) {
+	if(isset($_REQUEST['idCliente']) && FALSE) { //DEPRECATED FOR SECURITY
 		$idCliente = $_REQUEST['idCliente'];
 		$deviceId = 0;
 	} else {
 		if(isset($_REQUEST['deviceId'])) {
 			$deviceId = $_REQUEST['deviceId'];
-			if(isset($devices[$deviceId])) {
-				$idCliente = $devices[$deviceId];
-			} else {
+			$device = $db->getDevice($deviceId);
+			
+			if($device == FALSE) {
 				$errors [] = "Dispositivo {$deviceId} no encontrado";
 				$idCliente = 0;
+			} else {
+				$idCliente = $device["cliente_id"];
 			}
 		} else {
 			$deviceId = 0;
@@ -52,10 +31,20 @@
 		}
 	}
 	
-	
 	file_put_contents("logs/".$idCliente.'_'.$deviceId.'_'.time(), var_export($_REQUEST, true));	
-	#'Emisor' => array ('rfc' => 'APR0412108C5', 'nombre' => 'ACTIVIVIENDA PROMOCION SA DE CV', 'Regimen' => 'Régimen General de Ley Personas Morales'),
 	
+	$client_data = $db->getClientData($idCliente);
+	
+	$xml = new CfdiXml ();
+	
+	if($client_data) {
+		$xml->fillClientData($client_data);
+		$xml_data = $xml->getData();
+	} else {
+		$errors [] = "Cliente {$idCliente} no registrado.";
+	}
+	
+	/*
 	$datos = array (
 		10 => array (
 			'noCertificado' => '20001000000100005867',
@@ -74,22 +63,10 @@
 				)
 			),
 		)
-	);
-	
-	
-	if(isset($datos[$idCliente])) {
-		$xml_data = $datos[$idCliente];
-	} else {
-		$errors [] = "Cliente {$idCliente} no registrado.";
-	}
+	);*/
 
 	$xml_data['fecha'] = date('Y-m-d').'T'.date('H:i:s');
 	
-	#FolioFiscalOrig
-	#SerieFolioFiscalOrig
-	#FechaFolioFiscalOrig
-	#MontoFolioFiscalOrig
-		
 	$requestFields = array ('formaDePago', 'tipoDeComprobante', 'metodoDePago', 'NumCtaPago');
 	
 	foreach($requestFields as $requestField) {
@@ -133,7 +110,12 @@
 	if(isset($_REQUEST['conceptos'])) {
 		foreach($_REQUEST['conceptos'] as $concepto) {
 			$concepto = explode('|', $concepto);
-			list($valorUnitario, $cantidad, $unidad, $descripcion, $sku) = $concepto;
+			if(count($concepto) > 5) {
+				list($valorUnitario, $cantidad, $unidad, $descripcion, $sku) = $concepto;
+			} else {
+				list($valorUnitario, $cantidad, $unidad, $descripcion) = $concepto;
+				$sku = NULL;
+			}
 			
 			$importe = round($cantidad * $valorUnitario,2);
 			
@@ -183,31 +165,11 @@
 			try {
 				set_time_limit(0);
 				
-				/* carga archivo xml */
-				//$xml = simplexml_load_file ("C:\\xmls\\08F72325-37B4-47C1-8B5F-354D04FA7DF5.xml");
-						
-				/* Esto es para cargar el xml en una sola cadena, tal como lo necesita el web service
-				   en esta parte se recomienda que los caracteres raros y acentuados se metan con 
-				   secuencia de escape para xml.
-				   aqui se pueden dar una idea... http://xml.osmosislatina.com/curso/basico.htm		   
-				*/
 				$filename = $xml_filename . '.xml';
 
-				/*$output=""; 
-				$file = fopen($filename, "r"); 
-				while(!feof($file)) { 
-					//read file line by line into variable 
-				  $output = $output . fgets($file, 4096); 
-				} 
-				fclose ($file); */
-				//echo $output; 
-				
 				$XML = new DOMDocument(); 
 				$XML->load( $filename ); 
 				
-				//set_time_limit(60); 
-				#var_dump ($xml);
-			
 				$context = stream_context_create(array(
 					'ssl' => array(
 						'verify_peer' => false,
@@ -216,21 +178,7 @@
 					)
 				));
 				
-				
-				/*$client  = new SoapClient(null, array( 
-					'location' => 'https://...',
-					'uri' => '...', 
-					'stream_context' => $context
-				));*/
-		#var_dump (file_get_contents('https://dev.facturacfdi.mx:8081/WSTimbrado/WSForcogsaService?wsdl'));#die ();
-				/* conexion al web service */
-				$client = new SoapClient("https://dev.facturacfdi.mx:8081/WSTimbrado/WSForcogsaService?wsdl");
-				/*$client = new SoapClient(NULL,
-					array('location' => 'https://dev.facturacfdi.mx:8081/WSTimbrado/WSForcogsaService', 
-						'uri' => 'https://dev.facturacfdi.mx:8081/WSTimbrado/WSForcogsaService',
-							'stream_context' => $context));*/
-					
-				/* esto es solo para informativo */
+				$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL);
 				
 				/* se le pasan los datos de acceso */
 				$autentica = new Autenticar();

@@ -101,8 +101,6 @@
             display:block;
             text-align:center;
         }
-		
-		
     }
     </style>
 </head>
