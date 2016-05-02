@@ -5,16 +5,34 @@
     <title>Factura</title>
     
     <style>
+    
+    .invoice-box{
+        max-width:100%;
+        margin:auto;
+        padding:10px;
+        font-size:14px;
+        line-height:24px;
+        font-family:'Helvetica Neue', 'Helvetica', Helvetica, helvetica, Arial, sans-serif;
+        color:#555;
+    }
+
+    .screenButton {
+       display: none;
+    }
+
+    @media only screen {
+    .screenButton {
+       display: block;
+    }
+
     .invoice-box{
         max-width:800px;
         margin:auto;
         padding:30px;
         border:1px solid #eee;
         box-shadow:0 0 10px rgba(0, 0, 0, .15);
-        font-size:14px;
-        line-height:24px;
-        font-family:'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-        color:#555;
+    }
+
     }
 	
 	.invoice-box table{
@@ -33,7 +51,7 @@
     }
     
     .invoice-box table tr.top table td{
-        padding-bottom:20px;
+        padding-bottom:8px;
     }
     
     .invoice-box table tr.top table td.title{
@@ -43,7 +61,7 @@
     }
     
     .invoice-box table tr.information table td{
-        padding-bottom:40px;
+        padding-bottom:30px;
     }
     
     .invoice-box table tr.heading td{
@@ -106,6 +124,9 @@
 </head>
 
 <body>
+    <div style="width: 100%; margin: 0 auto; text-align: center;" class="screenButton">
+    <input type="button" class="screenButton" value="Descargar PDF" style="margin: 0 auto;" onclick="window.open('/factura/pdf/?invoice_id=<?php echo $invoice_id ?>')" /><br />
+    </div>
     <div class="invoice-box">
         <table cellpadding="0" cellspacing="0">
             <tr class="top">
@@ -113,7 +134,7 @@
                     <table>
                         <tr>
                             <td class="title">
-                                <img src="logos/<?php echo $factura->idCliente ?>.png" style="width:100%; max-width:170px; max-height: 170px;">
+                                <img src="/factura/logos/<?php echo $factura->idCliente ?>.png" style="width:100%; max-width:170px; max-height: 170px;">
                             </td>
                             
                             <td style="max-width: 300px; width: 300px;">
@@ -134,6 +155,21 @@
                     <table>
                         <tr>
                             <td>
+				<strong>RECEPTOR</strong><br />
+								
+                                <strong><?php echo $factura->xml_data->Receptor->nombre ?></strong><br />
+								
+								<?php echo $factura->xml_data->Receptor->Domicilio->calle ?>&nbsp;NO.&nbsp;<?php echo $factura->xml_data->Receptor->Domicilio->noExterior ?>&nbsp; INT.&nbsp;<?php echo $factura->xml_data->Receptor->Domicilio->noInterior ?><br />
+								<?php echo $factura->xml_data->Receptor->Domicilio->colonia ?>&nbsp;
+								C.P.&nbsp;<?php echo $factura->xml_data->Receptor->Domicilio->codigoPostal ?><br />
+								
+								<?php echo $factura->xml_data->Receptor->Domicilio->municipio ?>, <?php echo $factura->xml_data->Receptor->Domicilio->estado ?>, <?php echo $factura->xml_data->Receptor->Domicilio->pais ?>
+								<br />
+								RFC: <?php echo $factura->xml_data->Receptor->rfc ?><br />
+								<br />
+                            </td>
+                            <td>
+			       <strong>EMISOR</strong><br />
                                <strong><?php echo $factura->xml_data->Emisor->nombre ?></strong><br />
 							   <strong><small><?php echo $factura->xml_data->Emisor->Regimen ?></small></strong><br />
 								<?php echo $factura->xml_data->Emisor->Domicilio->calle ?>&nbsp;NO.&nbsp;
@@ -147,43 +183,12 @@
 								
                             </td>
                             
-                            <td>
-								
-                                <strong><?php echo $factura->xml_data->Receptor->nombre ?></strong><br />
-								
-								<?php echo $factura->xml_data->Receptor->Domicilio->calle ?>&nbsp;NO.&nbsp;<?php echo $factura->xml_data->Receptor->Domicilio->noExterior ?>&nbsp; INT.&nbsp;<?php echo $factura->xml_data->Receptor->Domicilio->noInterior ?><br />
-								<?php echo $factura->xml_data->Receptor->Domicilio->colonia ?>&nbsp;
-								C.P.&nbsp;<?php echo $factura->xml_data->Receptor->Domicilio->codigoPostal ?><br />
-								
-								<?php echo $factura->xml_data->Receptor->Domicilio->municipio ?>, <?php echo $factura->xml_data->Receptor->Domicilio->estado ?>, <?php echo $factura->xml_data->Receptor->Domicilio->pais ?>
-								<br />
-								RFC: <?php echo $factura->xml_data->Receptor->rfc ?><br />
-								<br />
-                            </td>
+
                         </tr>
                     </table>
                 </td>
             </tr>
             
-            <!-- tr class="heading">
-                <td>
-                    Payment Method
-                </td>
-                
-                <td>
-                    Check #
-                </td>
-            </tr>
-            
-            <tr class="details">
-                <td>
-                    Check
-                </td>
-                
-                <td>
-                    1000
-                </td>
-            </tr -->
             
             <tr class="heading">
                 <td>
@@ -245,6 +250,7 @@
 			<tr>
 				<td colspan=4></td>
 				<td colspan=2><small><?php echo $factura->xml_data->formaDePago ?></small></td>
+		</tr>
         </table>
 		
 		<div style='background: #888; color: #fff; font-weight: bold;'>Informaci&oacute;n del timbre fiscal</div>
@@ -267,7 +273,7 @@
 				</tr>
 				
 				<tr>
-					<td colspan=3><?php echo (string)$factura->cadenaOriginal ?></td>
+					<td colspan=3>||1.0|<?php echo (string)$timbres[0]['UUID'] ?>|<?php echo $factura->xml_data->fecha ?>|<?php echo (string)$timbres[0]['selloCFD'] ?>|<?php echo $factura->xml_data->noCertificado ?>||</td>
 				</tr>
 				
 				<tr>
@@ -294,7 +300,7 @@
 		</div>
 		<div style="clear: both;">&nbsp;</div>
 		
-		<div style='margin: 0 auto;text-align: center;'>Este documento es una representación impresa de un CFDI</a></div>
+		<div style='margin: 0 auto;text-align: center;'>Este documento es una representación impresa de un CFDI</div>
 		<div style='margin: 0 auto;text-align: center;'>Generado con <a href="http://www.bepos.com.mx">www.bepos.com.mx</a></div>
     </div>
 			

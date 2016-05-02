@@ -12,7 +12,7 @@
 		public function render ($template = "default")
 		{
 			extract($this->_invoice->getData());
-			include_once("templates/{$template}.php");
+			include_once(dirname(__FILE__) . "/../templates/{$template}.php");
 		}
 	}
 	

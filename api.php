@@ -41,7 +41,7 @@
 		$xml->fillClientData($client_data);
 		$xml_data = $xml->getData();
 	} else {
-		$errors [] = "Cliente {$idCliente} no registrado.";
+		$errors [] = "Cliente o dispositivo {$idCliente} no registrado. Contacte a BePOS para mayores informes.";
 	}
 	
 	/*
@@ -182,13 +182,23 @@
 					)
 				));
 				
-				$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL);
-				
-				/* se le pasan los datos de acceso */
+				if($client_data['estatus'] == 'pruebas') {
+				$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL_TEST); 
 				$autentica = new Autenticar();
 				$autentica->usuario = "pruebasWS";
 				$autentica->contrasena = "pruebasWS";
+
+} else if($client_data['estatus'] == 'activo') {
+				$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL_PROD); 
+				$autentica = new Autenticar();
+				$autentica->usuario = $client_data['ws_user']  ;
+				$autentica->contrasena = $client_data['ws_password'] ;
+
+} else {
+	echo json_encode(array("success" => FALSE, "errors" => array("Cuenta no activa")));die ();
+}
 				
+							
 				/* se cacha la respuesta de la autenticacion */
 				$responseAutentica = $client->Autenticar($autentica);	
 				

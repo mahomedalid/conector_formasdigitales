@@ -1,6 +1,7 @@
 <?php
 
-	include_once('config.php');
+
+	include_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.php');
 	
 	//Requirements:
 	
@@ -17,4 +18,4 @@
 	$renderer = new InvoiceRenderer($invoice);
 	
 	$renderer->render ();
-	die ();
+#	die ();
