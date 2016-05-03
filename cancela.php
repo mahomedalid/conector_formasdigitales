@@ -70,16 +70,15 @@
 	//-------
 	$serv->passwordkeys = "12345678a";
 	
-	$public_key_file = "";
+	$public_key_file = 'sellos/'.$client_data['noCertificado'].'.cer.pem';
+	$private_key_file = 'sellos/'.$client_data['noCertificado'].'.key.pem';
 	
-	$handle = fopen('archivosPEM/AAA010101AAA__csd_01.cer','r');
-	$contents = fread($handle,filesize("archivosPEM/AAA010101AAA__csd_01.cer"));
+	$handle = fopen($public_key_file,'r');
+	$contents = fread($handle,filesize($public_key_file));
 	$serv->publicKey = $contents;
 	
-	$private_key_file = "";
-	
-	$handle = fopen('archivosPEM/AAA010101AAA__csd_01.key','r');
-	$contents = fread($handle,filesize("archivosPEM/AAA010101AAA__csd_01.key"));
+	$handle = fopen($private_key_file,'r');
+	$contents = fread($handle,filesize($private_key_file));
 	$serv->privateKey = $contents;
 	
 	$serv->process();
