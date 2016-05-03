@@ -12,15 +12,3 @@
 	
 	include_once('classes/Invoice.php');
 	include_once('classes/InvoiceRenderer.php');
-	include_once('classes/Db.php');
-	include_once('classes/Logger.php');
-	include_once('classes/CfdiXml.php');
-	
-	define('FORMAS_DIGITALES_USER', 'pruebasWS');
-	define('FORMAS_DIGITALES_PASSWORD', 'pruebasPasswordWS');
-	
-	define('FORMAS_DIGITALES_WEBSERVICE_URL', 'https://dev.facturacfdi.mx:8081/WSTimbrado/WSForcogsaService?wsdl');
-	
-	define('DB_STRING', 'mysql:host=localhost;dbname=dbname;charset=latin1');
-	define('DB_USER', 'user');
-	define('DB_PASSWORD', 'password');
