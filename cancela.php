@@ -70,8 +70,8 @@
 	//-------
 	$serv->passwordkeys = "12345678a";
 	
-	$public_key_file = 'sellos/'.$client_data['noCertificado'].'.cer.pem';
-	$private_key_file = 'sellos/'.$client_data['noCertificado'].'.key.pem';
+	$public_key_file = 'sellos/'.$client_data['no_certificado'].'.cer';
+	$private_key_file = 'sellos/'.$client_data['no_certificado'].'.key';
 	
 	$handle = fopen($public_key_file,'r');
 	$contents = fread($handle,filesize($public_key_file));
@@ -84,12 +84,11 @@
 	$serv->process();
 	
 	if($serv->error != ""){
-		echo "Error**** <br>";
-		echo $serv->error . "<br>";
-		exit;
+		echo json_encode(array("success" => FALSE, "errors" => array($serv->error)));die ();
 	}else{
-		echo htmlentities($serv->out) . "<br>";
-		exit;
+		echo json_encode(array("success" => TRUE, "response" => $serv->out));die ();
 	}
-	
+	/**
+	<?xml version="1.0" encoding="UTF-8"?><ns2:CancelaCFDResponse xmlns:ns2="http://cancelacfd.sat.gob.mx" xmlns="http://www.w3.org/2000/09/xmldsig#" xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xml="http://www.w3.org/XML/1998/namespace"><ns2:CancelaCFDResult Fecha="2016-05-03T10:09:01.000-05:00" RfcEmisor="AAA010101AAA"><ns2:Folios><ns2:UUID>313CBD1A-FF11-4EA2-85C2-1FE536BC10DB</ns2:UUID><ns2:EstatusUUID>201</ns2:EstatusUUID></ns2:Folios><Signature Id="SelloSAT"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#hmac-sha512"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/TR/1999/REC-xpath-19991116"><XPath>not(ancestor-or-self::*[local-name()='Signature'])</XPath></Transform></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><DigestValue>GECYnFplkXVfy0riU5tZ7iB4cvMFakwsd8+Kq7Ufg/LKKG7yrPrL70q9haoY5Us3s1jmMbz+YZ3ol8ojCGJybQ==</DigestValue></Reference></SignedInfo><SignatureValue>sz5adLl0Gvq/Er4sjzvrSvjZR2ph9YEJmknRoo2HFQOTts4RY01niwICz14Q96lpWVJOqij2YsRKCUs+5OPTPA==</SignatureValue><KeyInfo><KeyName>20001000000100001696</KeyName><KeyValue><RSAKeyValue><Modulus>ANw/++rKpbTGpJ9sLyJkgweTftxSDwe0A+OeIx36MoRpbqoF6JHLZ8J6yqiGG7TTXtrQVcn8KOTvkKyBXRrnabbhaeWblLR+fmzfdywi4fxF5I/XbrSmSceVzF8Vpj87NeGtl1KvFr9BSa1F+1PLwZeYneRjquVBksALIqzwvzcL</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue></KeyInfo></Signature></ns2:CancelaCFDResult></ns2:CancelaCFDResponse>
+	**/
 	

@@ -40,7 +40,7 @@
 		var $responseAutentica;
 		var $Cancelacion_1Response;
 		
-		function Cancelacion($url){
+		function FD_Cancelador($url){
 			// Set error message
 			$this->error="";
 			
@@ -59,17 +59,16 @@
 					return 0;
 				}		
 				
-				var_dump($this->https);
-				
 				/* se le pasan los datos de acceso */
-				$autentica = new Autenticar();
+				$autentica = new FD_Autenticar();
 				$autentica->usuario = $this->usuario;
 				$autentica->contrasena = $this->password;
 				
 				
 				/* se cacha la respuesta de la autenticacion */
 				$this->responseAutentica = $this->https->Autenticar($autentica);	
-				if($this->responseAutentica->return->mensaje != ""){
+				
+				if(isset($this->responseAutentica->return->mensaje)){
 					$this->error = $this->responseAutentica->return->mensaje;
 				}else{
 					/* se manda el xml a timbrar */
@@ -83,16 +82,16 @@
 					$cancela1->privateKey = $this->privateKey; 
 					
 					/* cacha la respuesta */
-					$this->Cancelacion_1Response = $this->https->FD_Cancelar($cancela1);
+					$this->Cancelacion_1Response = $this->https->Cancelacion_1($cancela1);
 									
-					if($this->Cancelacion_1Response->return->mensaje != ""){
+					if(isset($this->Cancelacion_1Response->return->mensaje)){
 						$this->error = $this->Cancelacion_1Response->return->mensaje;
 					}else{
 						$this->out = $this->Cancelacion_1Response->return->acuse;
 					}			
 				}
 			} catch (SoapFault $e) {
-				print("Auth Error:::: $e");
+				$this->error = $e->getMessage();
 			}		
 		}	
 	}
