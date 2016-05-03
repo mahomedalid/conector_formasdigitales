@@ -183,20 +183,20 @@
 				));
 				
 				if($client_data['estatus'] == 'pruebas') {
-				$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL_TEST); 
-				$autentica = new Autenticar();
-				$autentica->usuario = "pruebasWS";
-				$autentica->contrasena = "pruebasWS";
+								$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL_TEST); 
+								$autentica = new FD_Autenticar();
+								$autentica->usuario = "pruebasWS";
+								$autentica->contrasena = "pruebasWS";
 
-} else if($client_data['estatus'] == 'activo') {
-				$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL_PROD); 
-				$autentica = new Autenticar();
-				$autentica->usuario = $client_data['ws_user']  ;
-				$autentica->contrasena = $client_data['ws_password'] ;
+				} else if($client_data['estatus'] == 'activo') {
+								$client = new SoapClient(FORMAS_DIGITALES_WEBSERVICE_URL_PROD); 
+								$autentica = new FD_Autenticar();
+								$autentica->usuario = $client_data['ws_user']  ;
+								$autentica->contrasena = $client_data['ws_password'] ;
 
-} else {
-	echo json_encode(array("success" => FALSE, "errors" => array("Cuenta no activa")));die ();
-}
+				} else {
+					echo json_encode(array("success" => FALSE, "errors" => array("Cuenta no activa")));die ();
+				}
 				
 							
 				/* se cacha la respuesta de la autenticacion */
@@ -204,7 +204,7 @@
 				
 				if(isset($responseAutentica->return->token)) {
 					/* se manda el xml a timbrar */
-					$timbrar = new Timbrar();
+					$timbrar = new FD_Timbrar();
 					$timbrar->cfd = $XML->saveXML();
 					$timbrar->token = $responseAutentica->return->token; 
 				
@@ -245,12 +245,3 @@
 	echo json_encode($results);
 	die ();
 	
-class Autenticar{
-	public $usuario;
-	public $contraseña;
-}
-
-class Timbrar{
-	public $cfd;
-	public $token;
-}

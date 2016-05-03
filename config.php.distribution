@@ -15,6 +15,7 @@
 	include_once('classes/Db.php');
 	include_once('classes/Logger.php');
 	include_once('classes/CfdiXml.php');
+	include_once('classes/FormasDigitales.php');
 	
 	define('FORMAS_DIGITALES_USER_TEST', 'pruebasWS');
 	define('FORMAS_DIGITALES_PASSWORD_TEST', 'pruebasWS');
