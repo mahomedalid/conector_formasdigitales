@@ -227,12 +227,24 @@
             </tr>
 			
 			<?php 
+				$impuestos = array ();
 				if(isset($factura->xml_data->Traslados)) {
 					foreach($factura->xml_data->Traslados as $traslado) {
+						
+						if(isset($impuestos[$traslado->impuesto.'_'.$traslado->tasa])) {
+							$impuesto = $impuestos[$traslado->impuesto.'_'.$traslado->tasa];
+							$impuesto->importe += $traslado->importe;
+						} else {
+							$impuesto = $traslado;
+						}
+						
+						$impuestos[$traslado->impuesto.'_'.$traslado->tasa] = $impuesto;
+					}
+					foreach($impuestos as $impuesto) {
 						?>
 					<tr class="total">
 						<td colspan=5></td>
-						<td><?php echo $traslado->impuesto ?> <?php echo $traslado->tasa ?>% : $ <?php echo number_format($traslado->importe,2) ?></td>
+						<td><?php echo $impuesto->impuesto ?> <?php echo $impuesto->tasa ?>% : $ <?php echo number_format($impuesto->importe,2) ?></td>
 					</tr>
 			<?php 	}		 
 				}
